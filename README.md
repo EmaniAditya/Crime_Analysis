@@ -23,9 +23,79 @@ The Crime Analysis Project is built using the following technology stack:
 - IDE: Visual Studio Code
 - Machine Learning Libraries: scikit-learn, fbprophet
 - Data Visualization Libraries: Google Charts, Plotly, Choropleth
-- Web Scraping: Beautiful Soup
+- Web Scraping (optional): Beautiful Soup, Selenium
 - Backend: Flask
 - Frontend: HTML, CSS, JS, Tailwind CSS
+
+## Installation
+
+1) Create and activate a virtual environment
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+2) Install core runtime dependencies (app + heatmap)
+
+```bash
+pip install -r requirements.txt
+```
+
+3) Optional: enable the scraper (to fetch fresh headlines)
+
+```bash
+pip install -r requirements-scrape.txt
+```
+
+Notes:
+
+- The heatmap generator `folium-map/index.py` works without the scraper. If scraping isn't available, it uses cached headlines and static coordinates, and geocodes when needed.
+- To run locally: `python app.py` then open http://127.0.0.1:5000
+
+## Recommended Actions
+
+If you’re unsure, do this minimal setup first (scraper optional):
+
+- __Install core deps (recommended)__  
+  Use [requirements.txt](requirements.txt) for everything needed to run the app.
+  ```bash
+  python3 -m venv .venv
+  source .venv/bin/activate
+  pip install -r requirements.txt
+  ```
+
+- __Optional: install scraper deps__  
+  Only if you want live news headline scraping for the heatmap.
+  ```bash
+  pip install -r requirements-scrape.txt
+  ```
+  Notes:
+  - If Chrome/Chromium isn’t available or Selenium fails, the app gracefully falls back and still runs (per [folium-map/index.py](folium-map/index.py)).
+  - If you do want Selenium: install Chrome/Chromium and optionally set `CHROME_BIN` to its path.
+
+- __Run the app__
+  ```bash
+  python app.py
+  ```
+  Open http://127.0.0.1:5000
+
+- __Generate/refresh the heatmap (optional)__
+  - Trigger from the app: GET `http://127.0.0.1:5000/run-file` (map saved to [templates/final.html](templates/final.html), view at `/foliummap`)
+  - Or run directly:
+    ```bash
+    python folium-map/index.py
+    ```
+    Then open http://127.0.0.1:5000/foliummap
+
+# Which requirements file to use?
+
+- __requirements.txt__ → always. Core runtime.
+- __requirements-scrape.txt__ → only if you want scraping (live headlines). Otherwise skip it.
+
+I followed the dependency split we set up earlier: core stays lean in [requirements.txt](requirements.txt); optional scraper in [requirements-scrape.txt](requirements-scrape.txt).
+
+Summary: Install from [requirements.txt](requirements.txt), run the app; add [requirements-scrape.txt](requirements-scrape.txt) only if you want live scraping.
 
 ## Overview Images
 

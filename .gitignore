@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.venv/
+.env
+.env.*
+
+# Editors/IDE
+.vscode/
+.idea/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Testing/coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Builds
+build/
+dist/
+*.egg-info/
+
+# Logs
+*.log
+
+# Data caches
+*.pkl
+# Allow model pickles to be tracked
+!Prediction/*.pkl
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Folium caches
+folium-map/__pycache__/
+folium-map/*.pickle
+
+# Generated Folium HTML
+/templates/final.html
+/final.html
