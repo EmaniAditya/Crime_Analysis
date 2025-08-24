@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.venv/
+.env
+.env.*
+
+# Editors/IDE
+.vscode/
+.idea/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Testing/coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Builds
+build/
+dist/
+*.egg-info/
+
+# Logs
+*.log
+
+# Data caches
+*.pkl
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Folium caches
+folium-map/__pycache__/

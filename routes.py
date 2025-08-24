@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, url_for, Markup, jsonify,make_response
+from flask import Flask, render_template, request, url_for, jsonify, make_response
 import pickle
 import pandas as pd
 import numpy as np
@@ -6,6 +6,8 @@ from werkzeug.utils import secure_filename
 import joblib
 from app import app
 import subprocess
+import os
+import sys
 
 
 #Deserializing ml models
@@ -180,13 +182,12 @@ def analysis():
 #crimefeed:
 @app.route('/crimefeed')
 def crimefeed():
-    response = make_response('templates/final.html')
-    
-    # Add cache-control headers to prevent caching
+    # Render page with no-cache headers so refresh shows updated map
+    response = make_response(render_template('crimefeed.html'))
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = '0'
-    return render_template('crimefeed.html')
+    return response
 
 
 #Plotly charts:
@@ -203,163 +204,178 @@ def analysis3():
 @app.route('/datadisp')
 def datadisp():
     return render_template('datadisplay.html')
+
 #Heat Map:
 @app.route('/foliummap')
 def foliummap():
- 	return render_template("final.html")
+	resp = make_response(render_template("final.html"))
+	resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+	resp.headers['Pragma'] = 'no-cache'
+	resp.headers['Expires'] = '0'
+	return resp
 
 @app.route("/run-file")
 def run_file():
-    file_path = "folium-map\index.py"  
-    subprocess.Popen(["python", file_path])
-    return {"message": "File execution initiated"}
+    try:
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(base_dir, "folium-map", "index.py")
+        # Use the current interpreter to avoid environment issues; fully detach and discard output
+        proc = subprocess.Popen(
+            [sys.executable, file_path],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.STDOUT,
+            start_new_session=True,
+        )
+        return jsonify({"message": "File execution initiated", "pid": proc.pid})
+    except Exception as e:
+        return jsonify({"message": f"Failed to start: {e}"}), 500
 
 
 # defining paths to plotly graphs
 
-@app.route('/plots/Multi_linear/Andhra Pradesh_linear.html')
+@app.route('/plots/Multi_Linear/Andhra Pradesh_linear.html')
 def g1():
-    return render_template('plots/Multi_linear/Andhra Pradesh_linear.html')
-    
-@app.route('/plots/Multi_linear/Arunachal Pradesh_linear.html')
+    return render_template('plots/Multi_Linear/Andhra Pradesh_linear.html')
+        
+@app.route('/plots/Multi_Linear/Arunachal Pradesh_linear.html')
 def g2():
-    return render_template('plots/Multi_linear/Arunachal Pradesh_linear.html')
-    
-@app.route('/plots/Multi_linear/Assam_linear.html')
+    return render_template('plots/Multi_Linear/Arunachal Pradesh_linear.html')
+        
+@app.route('/plots/Multi_Linear/Assam_linear.html')
 def g3():
-    return render_template('plots/Multi_linear/Assam_linear.html')
-    
-@app.route('/plots/Multi_linear/Bihar_linear.html')
+    return render_template('plots/Multi_Linear/Assam_linear.html')
+        
+@app.route('/plots/Multi_Linear/Bihar_linear.html')
 def g4():
-    return render_template('plots/Multi_linear/Bihar_linear.html')
-    
-@app.route('/plots/Multi_linear/Chhatisgarh_linear.html')
+    return render_template('plots/Multi_Linear/Bihar_linear.html')
+        
+@app.route('/plots/Multi_Linear/Chhattisgarh_linear.html')
 def g5():
-    return render_template('plots/Multi_linear/Chhatisgarh_linear.html')
-    
-@app.route('/plots/Multi_linear/Goa_linear.html')
+    return render_template('plots/Multi_Linear/Chhattisgarh_linear.html')
+        
+@app.route('/plots/Multi_Linear/Goa_linear.html')
 def g6():
-    return render_template('plots/Multi_linear/Goa_linear.html')
-    
-@app.route('/plots/Multi_linear/Gujrat_linear.html')
+    return render_template('plots/Multi_Linear/Goa_linear.html')
+        
+@app.route('/plots/Multi_Linear/Gujarat_linear.html')
 def g7():
-    return render_template('plots/Multi_linear/Gujrat_linear.html')
-    
-@app.route('/plots/Multi_linear/Haryana_linear.html')
+    return render_template('plots/Multi_Linear/Gujarat_linear.html')
+        
+@app.route('/plots/Multi_Linear/Haryana_linear.html')
 def g8():
-    return render_template('plots/Multi_linear/Haryana_linear.html')
-    
-@app.route('/plots/Multi_linear/Himachal Pradesh_linear.html')
+    return render_template('plots/Multi_Linear/Haryana_linear.html')
+        
+@app.route('/plots/Multi_Linear/Himachal Pradesh_linear.html')
 def g9():
-    return render_template('plots/Multi_linear/Himachal Pradesh_linear.html')
-    
-@app.route('/plots/Multi_linear/Jammu & Kashmir_linear.html')
+    return render_template('plots/Multi_Linear/Himachal Pradesh_linear.html')
+        
+@app.route('/plots/Multi_Linear/Jammu & Kashmir_linear.html')
 def g10():
-    return render_template('plots/Multi_linear/Jammu & Kashmir_linear.html')
-    
-@app.route('/plots/Multi_linear/Jharkhand_linear.html')
+    return render_template('plots/Multi_Linear/Jammu & Kashmir_linear.html')
+        
+@app.route('/plots/Multi_Linear/Jharkhand_linear.html')
 def g11():
-    return render_template('plots/Multi_linear/Jharkhand_linear.html')
-    
-@app.route('/plots/Multi_linear/Karnataka_linear.html')
+    return render_template('plots/Multi_Linear/Jharkhand_linear.html')
+        
+@app.route('/plots/Multi_Linear/Karnataka_linear.html')
 def g12():
-    return render_template('plots/Multi_linear/Karnataka_linear.html')
-    
-@app.route('/plots/Multi_linear/Kerala_linear.html')
+    return render_template('plots/Multi_Linear/Karnataka_linear.html')
+        
+@app.route('/plots/Multi_Linear/Kerala_linear.html')
 def g13():
-    return render_template('plots/Multi_linear/kerala_linear.html')
-    
-@app.route('/plots/Multi_linear/Madhya Pradesh_linear.html')
+    return render_template('plots/Multi_Linear/Kerala_linear.html')
+        
+@app.route('/plots/Multi_Linear/Madhya Pradesh_linear.html')
 def g14():
-    return render_template('plots/Multi_linear/Madhya Pradesh_linear.html')
-    
-@app.route('/plots/Multi_linear/Maharashtra_linear.html')
+    return render_template('plots/Multi_Linear/Madhya Pradesh_linear.html')
+        
+@app.route('/plots/Multi_Linear/Maharashtra_linear.html')
 def g15():
-    return render_template('plots/Multi_linear/Maharashtra_linear.html')
-    
-@app.route('/plots/Multi_linear/Manipur_linear.html')
+    return render_template('plots/Multi_Linear/Maharashtra_linear.html')
+        
+@app.route('/plots/Multi_Linear/Manipur_linear.html')
 def g16():
-    return render_template('plots/Multi_linear/Manipur_linear.html')
-    
-@app.route('/plots/Multi_linear/Meghalaya_linear.html')
+    return render_template('plots/Multi_Linear/Manipur_linear.html')
+        
+@app.route('/plots/Multi_Linear/Meghalaya_linear.html')
 def g17():
-    return render_template('plots/Multi_linear/Meghalaya_linear.html')
-    
-@app.route('/plots/Multi_linear/Mizoram_linear.html')
+    return render_template('plots/Multi_Linear/Meghalaya_linear.html')
+        
+@app.route('/plots/Multi_Linear/Mizoram_linear.html')
 def g18():
-    return render_template('plots/Multi_linear/Mizoram_linear.html')
-    
-@app.route('/plots/Multi_linear/Nagaland_linear.html')
+    return render_template('plots/Multi_Linear/Mizoram_linear.html')
+        
+@app.route('/plots/Multi_Linear/Nagaland_linear.html')
 def g19():
-    return render_template('plots/Multi_linear/Nagaland_linear.html')
-    
-@app.route('/plots/Multi_linear/Odisha_linear.html')
+    return render_template('plots/Multi_Linear/Nagaland_linear.html')
+        
+@app.route('/plots/Multi_Linear/Odisha_linear.html')
 def g20():
-    return render_template('plots/Multi_linear/Odisha_linear.html')
-    
-@app.route('/plots/Multi_linear/Punjab_linear.html')
+    return render_template('plots/Multi_Linear/Odisha_linear.html')
+        
+@app.route('/plots/Multi_Linear/Punjab_linear.html')
 def g21():
-    return render_template('plots/Multi_linear/Punjab_linear.html')
-    
-@app.route('/plots/Multi_linear/Sikkim_linear.html')
+    return render_template('plots/Multi_Linear/Punjab_linear.html')
+        
+@app.route('/plots/Multi_Linear/Sikkim_linear.html')
 def g22():
-    return render_template('plots/Multi_linear/Sikkim_linear.html')
-    
-@app.route('/plots/Multi_linear/Tamil Nadu_linear.html')
+    return render_template('plots/Multi_Linear/Sikkim_linear.html')
+        
+@app.route('/plots/Multi_Linear/Tamil Nadu_linear.html')
 def g23():
-    return render_template('plots/Multi_linear/Tamil Nadu_linear.html')
-    
-@app.route('/plots/Multi_linear/Telangana_linear.html')
+    return render_template('plots/Multi_Linear/Tamil Nadu_linear.html')
+        
+@app.route('/plots/Multi_Linear/Telangana_linear.html')
 def g24():
-    return render_template('plots/Multi_linear/Telangana_linear.html')
-    
-@app.route('/plots/Multi_linear/Tripura_linear.html')
+    return render_template('plots/Multi_Linear/Telangana_linear.html')
+        
+@app.route('/plots/Multi_Linear/Tripura_linear.html')
 def g25():
-    return render_template('plots/Multi_linear/Tripura_linear.html')
-    
-@app.route('/plots/Multi_linear/Uttar Pradesh_linear.html')
+    return render_template('plots/Multi_Linear/Tripura_linear.html')
+        
+@app.route('/plots/Multi_Linear/Uttar Pradesh_linear.html')
 def g26():
-    return render_template('plots/Multi_linear/Uttar Pradesh_linear.html')
-    
-@app.route('/plots/Multi_linear/Uttaranchal_linear.html')
+    return render_template('plots/Multi_Linear/Uttar Pradesh_linear.html')
+        
+@app.route('/plots/Multi_Linear/Uttarakhand_linear.html')
 def g27():
-    return render_template('plots/Multi_linear/Uttaranchal_linear.html')
-    
-@app.route('/plots/Multi_linear/West Bengal_linear.html')
+    return render_template('plots/Multi_Linear/Uttarakhand_linear.html')
+        
+@app.route('/plots/Multi_Linear/West Bengal_linear.html')
 def g28():
-    return render_template('plots/Multi_linear/West Bengal_linear.html')
-    
-@app.route('/plots/Multi_linear/A & N Islands_linear.html')
+    return render_template('plots/Multi_Linear/West Bengal_linear.html')
+        
+@app.route('/plots/Multi_Linear/A & N Islands_linear.html')
 def g29():
-    return render_template('plots/Multi_linear/A & N Islands_linear.html')
-    
-@app.route('/plots/Multi_linear/Chandigarh_linear.html')
+    return render_template('plots/Multi_Linear/A & N Islands_linear.html')
+        
+@app.route('/plots/Multi_Linear/Chandigarh_linear.html')
 def g30():
-    return render_template('plots/Multi_linear/Chandigarh_linear.html')
-    
-@app.route('/plots/Multi_linear/D & N Haveli and Daman & Diu_linear.html')
+    return render_template('plots/Multi_Linear/Chandigarh_linear.html')
+        
+@app.route('/plots/Multi_Linear/D & N Haveli and Daman & Diu_linear.html')
 def g31():
-    return render_template('plots/Multi_linear/D & N Haveli and Daman & Diu_linear.html')
+    return render_template('plots/Multi_Linear/D & N Haveli and Daman & Diu_linear.html')
 
-@app.route('/plots/Multi_linear/Delhi_linear.html')
+@app.route('/plots/Multi_Linear/Delhi_linear.html')
 def g32():
-    return render_template('plots/Multi_linear/Delhi_linear.html')
-    
-@app.route('/plots/Multi_linear/Lakshadweep_linear.html')
+    return render_template('plots/Multi_Linear/Delhi_linear.html')
+        
+@app.route('/plots/Multi_Linear/Lakshadweep_linear.html')
 def g33():
-    return render_template('plots/Multi_linear/Lakshadweep_linear.html')
-    
-@app.route('/plots/Multi_linear/Puducherry_linear.html')
+    return render_template('plots/Multi_Linear/Lakshadweep_linear.html')
+        
+@app.route('/plots/Multi_Linear/Puducherry_linear.html')
 def g34():
-    return render_template('plots/Multi_linear/Pudducherry_linear.html')
-    
-@app.route('/plots/Multi_linear/Rajasthan_linear.html')
+    return render_template('plots/Multi_Linear/Puducherry_linear.html')
+        
+@app.route('/plots/Multi_Linear/Rajasthan_linear.html')
 def g35():
-    return render_template('plots/Multi_linear/Rajasthan_linear.html')
-    
-@app.route('/plots/Multi_linear/Assam_linear.html')
+    return render_template('plots/Multi_Linear/Rajasthan_linear.html')
+        
+@app.route('/plots/Multi_Linear/Ladakh_linear.html')
 def g36():
-    return render_template('plots/Multi_linear/Assam_linear.html')
+    return render_template('plots/Multi_Linear/Ladakh_linear.html')
 
 @app.route('/plots/Stacked_Bar_Charts/Andhra Pradesh_stbar.html')
 def g37():
@@ -377,17 +393,17 @@ def g39():
 def g40():
     return render_template('plots/Stacked_Bar_Charts/Bihar_stbar.html')
     
-@app.route('/plots/Stacked_Bar_Charts/Chhatisgarh_stbar.html')
+@app.route('/plots/Stacked_Bar_Charts/Chhattisgarh_stbar.html')
 def g41():
-    return render_template('plots/Stacked_Bar_Charts/Chhatisgarh_stbar.html')
+    return render_template('plots/Stacked_Bar_Charts/Chhattisgarh_stbar.html')
     
 @app.route('/plots/Stacked_Bar_Charts/Goa_stbar.html')
 def g42():
     return render_template('plots/Stacked_Bar_Charts/Goa_stbar.html')
     
-@app.route('/plots/Stacked_Bar_Charts/Gujrat_stbar.html')
+@app.route('/plots/Stacked_Bar_Charts/Gujarat_stbar.html')
 def g43():
-    return render_template('plots/Stacked_Bar_Charts/Gujrat_stbar.html')
+    return render_template('plots/Stacked_Bar_Charts/Gujarat_stbar.html')
     
 @app.route('/plots/Stacked_Bar_Charts/Haryana_stbar.html')
 def g44():
@@ -411,7 +427,7 @@ def g48():
     
 @app.route('/plots/Stacked_Bar_Charts/Kerala_stbar.html')
 def g49():
-    return render_template('plots/Stacked_Bar_Charts/kerala_stbar.html')
+    return render_template('plots/Stacked_Bar_Charts/Kerala_stbar.html')
     
 @app.route('/plots/Stacked_Bar_Charts/Madhya Pradesh_stbar.html')
 def g50():
@@ -465,9 +481,9 @@ def g61():
 def g62():
     return render_template('plots/Stacked_Bar_Charts/Uttar Pradesh_stbar.html')
     
-@app.route('/plots/Stacked_Bar_Charts/Uttaranchal_stbar.html')
+@app.route('/plots/Stacked_Bar_Charts/Uttarakhand_stbar.html')
 def g63():
-    return render_template('plots/Stacked_Bar_Charts/Uttaranchal_stbar.html')
+    return render_template('plots/Stacked_Bar_Charts/Uttarakhand_stbar.html')
     
 @app.route('/plots/Stacked_Bar_Charts/West Bengal_stbar.html')
 def g64():
@@ -495,15 +511,15 @@ def g69():
     
 @app.route('/plots/Stacked_Bar_Charts/Puducherry_stbar.html')
 def g70():
-    return render_template('plots/Stacked_Bar_Charts/Pudducherry_stbar.html')
+    return render_template('plots/Stacked_Bar_Charts/Puducherry_stbar.html')
     
 @app.route('/plots/Stacked_Bar_Charts/Rajasthan_stbar.html')
 def g71():
     return render_template('plots/Stacked_Bar_Charts/Rajasthan_stbar.html')
     
-@app.route('/plots/Stacked_Bar_Charts/Assam_stbar.html')
+@app.route('/plots/Stacked_Bar_Charts/Ladakh_stbar.html')
 def g72():
-    return render_template('plots/Stacked_Bar_Charts/Assam_stbar.html')
+    return render_template('plots/Stacked_Bar_Charts/Ladakh_stbar.html')
 
 @app.route('/plots/Grouped_Bar_Charts/Andhra Pradesh_grbar.html')
 def g73():
@@ -521,17 +537,17 @@ def g75():
 def g76():
     return render_template('plots/Grouped_Bar_Charts/Bihar_grbar.html')
     
-@app.route('/plots/Grouped_Bar_Charts/Chhatisgarh_grbar.html')
+@app.route('/plots/Grouped_Bar_Charts/Chhattisgarh_grbar.html')
 def g77():
-    return render_template('plots/Grouped_Bar_Charts/Chhatisgarh_grbar.html')
+    return render_template('plots/Grouped_Bar_Charts/Chhattisgarh_grbar.html')
     
 @app.route('/plots/Grouped_Bar_Charts/Goa_grbar.html')
 def g78():
     return render_template('plots/Grouped_Bar_Charts/Goa_grbar.html')
     
-@app.route('/plots/Grouped_Bar_Charts/Gujrat_grbar.html')
+@app.route('/plots/Grouped_Bar_Charts/Gujarat_grbar.html')
 def g79():
-    return render_template('plots/Grouped_Bar_Charts/Gujrat_grbar.html')
+    return render_template('plots/Grouped_Bar_Charts/Gujarat_grbar.html')
     
 @app.route('/plots/Grouped_Bar_Charts/Haryana_grbar.html')
 def g80():
@@ -555,7 +571,7 @@ def g84():
     
 @app.route('/plots/Grouped_Bar_Charts/Kerala_grbar.html')
 def g85():
-    return render_template('plots/Grouped_Bar_Charts/kerala_grbar.html')
+    return render_template('plots/Grouped_Bar_Charts/Kerala_grbar.html')
     
 @app.route('/plots/Grouped_Bar_Charts/Madhya Pradesh_grbar.html')
 def g86():
@@ -609,9 +625,9 @@ def g97():
 def g98():
     return render_template('plots/Grouped_Bar_Charts/Uttar Pradesh_grbar.html')
     
-@app.route('/plots/Grouped_Bar_Charts/Uttaranchal_grbar.html')
+@app.route('/plots/Grouped_Bar_Charts/Uttarakhand_grbar.html')
 def g99():
-    return render_template('plots/Grouped_Bar_Charts/Uttaranchal_grbar.html')
+    return render_template('plots/Grouped_Bar_Charts/Uttarakhand_grbar.html')
     
 @app.route('/plots/Grouped_Bar_Charts/West Bengal_grbar.html')
 def g100():
@@ -639,29 +655,29 @@ def g105():
     
 @app.route('/plots/Grouped_Bar_Charts/Puducherry_grbar.html')
 def g106():
-    return render_template('plots/Grouped_Bar_Charts/Pudducherry_grbar.html')
+    return render_template('plots/Grouped_Bar_Charts/Puducherry_grbar.html')
     
 @app.route('/plots/Grouped_Bar_Charts/Rajasthan_grbar.html')
 def g107():
     return render_template('plots/Grouped_Bar_Charts/Rajasthan_grbar.html')
     
-@app.route('/plots/Grouped_Bar_Charts/Assam_grbar.html')
+@app.route('/plots/Grouped_Bar_Charts/Ladakh_grbar.html')
 def g108():
-    return render_template('plots/Grouped_Bar_Charts/Assam_grbar.html')
+    return render_template('plots/Grouped_Bar_Charts/Ladakh_grbar.html')
     
 #Geospatial links :
 @app.route('/plots/Choropleth/2014/2014_Corruption.html')
 def m1():
     return render_template('plots/Choropleth/2014/2014_Corruption.html')
-@app.route('/plots/Choropleth/2014/2014_Crimes_Against_Children.html')
+@app.route('/plots/Choropleth/2014/2014_Crimes_against_children.html')
 def m2():
-    return render_template('plots/Choropleth/2014/2014_Crimes_Against_Children.html')
-@app.route('/plots/Choropleth/2014/2014_Crimes_Against_Senior_Citizen.html')
+    return render_template('plots/Choropleth/2014/2014_Crimes_against_children.html')
+@app.route('/plots/Choropleth/2014/2014_Crimes_against_senior_citizen.html')
 def m3():
-    return render_template('plots/Choropleth/2014/2014_Crimes_Against_Senior_Citizen.html')
-@app.route('/plots/Choropleth/2014/2014_Crimes_Against_Women.html')
+    return render_template('plots/Choropleth/2014/2014_Crimes_against_senior_citizen.html')
+@app.route('/plots/Choropleth/2014/2014_Crimes_against_women.html')
 def m4():
-    return render_template('plots/Choropleth/2014/2014_Crimes_Against_Women.html')
+    return render_template('plots/Choropleth/2014/2014_Crimes_against_women.html')
 @app.route('/plots/Choropleth/2014/2014_Cyber_Crime.html')
 def m5():
     return render_template('plots/Choropleth/2014/2014_Cyber_Crime.html')
@@ -677,15 +693,15 @@ def m8():
 @app.route('/plots/Choropleth/2015/2015_Corruption.html')
 def m9():
     return render_template('plots/Choropleth/2015/2015_Corruption.html')
-@app.route('/plots/Choropleth/2015/2015_Crimes_Against_Children.html')
+@app.route('/plots/Choropleth/2015/2015_Crimes_against_children.html')
 def m10():
-    return render_template('plots/Choropleth/2015/2015_Crimes_Against_Children.html')
-@app.route('/plots/Choropleth/2015/2015_Crimes_Against_Senior_Citizen.html')
+    return render_template('plots/Choropleth/2015/2015_Crimes_against_children.html')
+@app.route('/plots/Choropleth/2015/2015_Crimes_against_senior_citizen.html')
 def m11():
-    return render_template('plots/Choropleth/2015/2015_Crimes_Against_Senior_Citizen.html')
-@app.route('/plots/Choropleth/2015/2015_Crimes_Against_Women.html')
+    return render_template('plots/Choropleth/2015/2015_Crimes_against_senior_citizen.html')
+@app.route('/plots/Choropleth/2015/2015_Crimes_against_women.html')
 def m12():
-    return render_template('plots/Choropleth/2015/2015_Crimes_Against_Women.html')
+    return render_template('plots/Choropleth/2015/2015_Crimes_against_women.html')
 @app.route('/plots/Choropleth/2015/2015_Cyber_Crime.html')
 def m13():
     return render_template('plots/Choropleth/2015/2015_Cyber_Crime.html')
@@ -701,15 +717,15 @@ def m16():
 @app.route('/plots/Choropleth/2016/2016_Corruption.html')
 def m17():
     return render_template('plots/Choropleth/2016/2016_Corruption.html')
-@app.route('/plots/Choropleth/2016/2016_Crimes_Against_Children.html')
+@app.route('/plots/Choropleth/2016/2016_Crimes_against_children.html')
 def m18():
-    return render_template('plots/Choropleth/2016/2016_Crimes_Against_Children.html')
-@app.route('/plots/Choropleth/2016/2016_Crimes_Against_Senior_Citizen.html')
+    return render_template('plots/Choropleth/2016/2016_Crimes_against_children.html')
+@app.route('/plots/Choropleth/2016/2016_Crimes_against_senior_citizen.html')
 def m19():
-    return render_template('plots/Choropleth/2016/2016_Crimes_Against_Senior_Citizen.html')
-@app.route('/plots/Choropleth/2016/2016_Crimes_Against_Women.html')
+    return render_template('plots/Choropleth/2016/2016_Crimes_against_senior_citizen.html')
+@app.route('/plots/Choropleth/2016/2016_Crimes_against_women.html')
 def m20():
-    return render_template('plots/Choropleth/2016/2016_Crimes_Against_Women.html')
+    return render_template('plots/Choropleth/2016/2016_Crimes_against_women.html')
 @app.route('/plots/Choropleth/2016/2016_Cyber_Crime.html')
 def m21():
     return render_template('plots/Choropleth/2016/2016_Cyber_Crime.html')
@@ -725,15 +741,15 @@ def m24():
 @app.route('/plots/Choropleth/2017/2017_Corruption.html')
 def m25():
     return render_template('plots/Choropleth/2017/2017_Corruption.html')
-@app.route('/plots/Choropleth/2017/2017_Crimes_Against_Children.html')
+@app.route('/plots/Choropleth/2017/2017_Crimes_against_children.html')
 def m26():
-    return render_template('plots/Choropleth/2017/2017_Crimes_Against_Children.html')
-@app.route('/plots/Choropleth/2017/2017_Crimes_Against_Senior_Citizen.html')
+    return render_template('plots/Choropleth/2017/2017_Crimes_against_children.html')
+@app.route('/plots/Choropleth/2017/2017_Crimes_against_senior_citizen.html')
 def m27():
-    return render_template('plots/Choropleth/2017/2017_Crimes_Against_Senior_Citizen.html')
-@app.route('/plots/Choropleth/2017/2017_Crimes_Against_Women.html')
+    return render_template('plots/Choropleth/2017/2017_Crimes_against_senior_citizen.html')
+@app.route('/plots/Choropleth/2017/2017_Crimes_against_women.html')
 def m28():
-    return render_template('plots/Choropleth/2017/2017_Crimes_Against_Women.html')
+    return render_template('plots/Choropleth/2017/2017_Crimes_against_women.html')
 @app.route('/plots/Choropleth/2017/2017_Cyber_Crime.html')
 def m29():
     return render_template('plots/Choropleth/2017/2017_Cyber_Crime.html')
@@ -749,15 +765,15 @@ def m32():
 @app.route('/plots/Choropleth/2018/2018_Corruption.html')
 def m33():
     return render_template('plots/Choropleth/2018/2018_Corruption.html')
-@app.route('/plots/Choropleth/2018/2018_Crimes_Against_Children.html')
+@app.route('/plots/Choropleth/2018/2018_Crimes_against_children.html')
 def m34():
-    return render_template('plots/Choropleth/2018/2018_Crimes_Against_Children.html')
-@app.route('/plots/Choropleth/2018/2018_Crimes_Against_Senior_Citizen.html')
+    return render_template('plots/Choropleth/2018/2018_Crimes_against_children.html')
+@app.route('/plots/Choropleth/2018/2018_Crimes_against_senior_citizen.html')
 def m35():
-    return render_template('plots/Choropleth/2018/2018_Crimes_Against_Senior_Citizen.html')
-@app.route('/plots/Choropleth/2018/2018_Crimes_Against_Women.html')
+    return render_template('plots/Choropleth/2018/2018_Crimes_against_senior_citizen.html')
+@app.route('/plots/Choropleth/2018/2018_Crimes_against_women.html')
 def m36():
-    return render_template('plots/Choropleth/2018/2018_Crimes_Against_Women.html')
+    return render_template('plots/Choropleth/2018/2018_Crimes_against_women.html')
 @app.route('/plots/Choropleth/2018/2018_Cyber_Crime.html')
 def m37():
     return render_template('plots/Choropleth/2018/2018_Cyber_Crime.html')
@@ -773,15 +789,15 @@ def m40():
 @app.route('/plots/Choropleth/2019/2019_Corruption.html')
 def m41():
     return render_template('plots/Choropleth/2019/2019_Corruption.html')
-@app.route('/plots/Choropleth/2019/2019_Crimes_Against_Children.html')
+@app.route('/plots/Choropleth/2019/2019_Crimes_against_children.html')
 def m42():
-    return render_template('plots/Choropleth/2019/2019_Crimes_Against_Children.html')
-@app.route('/plots/Choropleth/2019/2019_Crimes_Against_Senior_Citizen.html')
+    return render_template('plots/Choropleth/2019/2019_Crimes_against_children.html')
+@app.route('/plots/Choropleth/2019/2019_Crimes_against_senior_citizen.html')
 def m43():
-    return render_template('plots/Choropleth/2019/2019_Crimes_Against_Senior_Citizen.html')
-@app.route('/plots/Choropleth/2019/2019_Crimes_Against_Women.html')
+    return render_template('plots/Choropleth/2019/2019_Crimes_against_senior_citizen.html')
+@app.route('/plots/Choropleth/2019/2019_Crimes_against_women.html')
 def m44():
-    return render_template('plots/Choropleth/2019/2019_Crimes_Against_Women.html')
+    return render_template('plots/Choropleth/2019/2019_Crimes_against_women.html')
 @app.route('/plots/Choropleth/2019/2019_Cyber_Crime.html')
 def m45():
     return render_template('plots/Choropleth/2019/2019_Cyber_Crime.html')
@@ -797,15 +813,15 @@ def m48():
 @app.route('/plots/Choropleth/2020/2020_Corruption.html')
 def m49():
     return render_template('plots/Choropleth/2020/2020_Corruption.html')
-@app.route('/plots/Choropleth/2020/2020_Crimes_Against_Children.html')
+@app.route('/plots/Choropleth/2020/2020_Crimes_against_children.html')
 def m50():
-    return render_template('plots/Choropleth/2020/2020_Crimes_Against_Children.html')
-@app.route('/plots/Choropleth/2020/2020_Crimes_Against_Senior_Citizen.html')
+    return render_template('plots/Choropleth/2020/2020_Crimes_against_children.html')
+@app.route('/plots/Choropleth/2020/2020_Crimes_against_senior_citizen.html')
 def m51():
-    return render_template('plots/Choropleth/2020/2020_Crimes_Against_Senior_Citizen.html')
-@app.route('/plots/Choropleth/2020/2020_Crimes_Against_Women.html')
+    return render_template('plots/Choropleth/2020/2020_Crimes_against_senior_citizen.html')
+@app.route('/plots/Choropleth/2020/2020_Crimes_against_women.html')
 def m52():
-    return render_template('plots/Choropleth/2020/2020_Crimes_Against_Women.html')
+    return render_template('plots/Choropleth/2020/2020_Crimes_against_women.html')
 @app.route('/plots/Choropleth/2020/2020_Cyber_Crime.html')
 def m53():
     return render_template('plots/Choropleth/2020/2020_Cyber_Crime.html')
@@ -821,15 +837,15 @@ def m56():
 @app.route('/plots/Choropleth/2021/2021_Corruption.html')
 def m57():
     return render_template('plots/Choropleth/2021/2021_Corruption.html')
-@app.route('/plots/Choropleth/2021/2021_Crimes_Against_Children.html')
+@app.route('/plots/Choropleth/2021/2021_Crimes_against_children.html')
 def m58():
-    return render_template('plots/Choropleth/2021/2021_Crimes_Against_Children.html')
-@app.route('/plots/Choropleth/2021/2021_Crimes_Against_Senior_Citizen.html')
+    return render_template('plots/Choropleth/2021/2021_Crimes_against_children.html')
+@app.route('/plots/Choropleth/2021/2021_Crimes_against_senior_citizen.html')
 def m59():
-    return render_template('plots/Choropleth/2021/2021_Crimes_Against_Senior_Citizen.html')
-@app.route('/plots/Choropleth/2021/2021_Crimes_Against_Women.html')
+    return render_template('plots/Choropleth/2021/2021_Crimes_against_senior_citizen.html')
+@app.route('/plots/Choropleth/2021/2021_Crimes_against_women.html')
 def m60():
-    return render_template('plots/Choropleth/2021/2021_Crimes_Against_Women.html')
+    return render_template('plots/Choropleth/2021/2021_Crimes_against_women.html')
 @app.route('/plots/Choropleth/2021/2021_Cyber_Crime.html')
 def m61():
     return render_template('plots/Choropleth/2021/2021_Cyber_Crime.html')
