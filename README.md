@@ -23,9 +23,35 @@ The Crime Analysis Project is built using the following technology stack:
 - IDE: Visual Studio Code
 - Machine Learning Libraries: scikit-learn, fbprophet
 - Data Visualization Libraries: Google Charts, Plotly, Choropleth
-- Web Scraping: Beautiful Soup
+- Web Scraping (optional): Beautiful Soup, Selenium
 - Backend: Flask
 - Frontend: HTML, CSS, JS, Tailwind CSS
+
+## Installation
+
+1) Create and activate a virtual environment
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+2) Install core runtime dependencies (app + heatmap)
+
+```bash
+pip install -r requirements.txt
+```
+
+3) Optional: enable the scraper (to fetch fresh headlines)
+
+```bash
+pip install -r requirements-scrape.txt
+```
+
+Notes:
+
+- The heatmap generator `folium-map/index.py` works without the scraper. If scraping isn't available, it uses cached headlines and static coordinates, and geocodes when needed.
+- To run locally: `python app.py` then open http://127.0.0.1:5000
 
 ## Overview Images
 
