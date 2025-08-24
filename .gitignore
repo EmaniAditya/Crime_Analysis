@@ -30,6 +30,8 @@ dist/
 
 # Data caches
 *.pkl
+# Allow model pickles to be tracked
+!Prediction/*.pkl
 
 # OS
 .DS_Store
@@ -37,3 +39,8 @@ Thumbs.db
 
 # Folium caches
 folium-map/__pycache__/
+folium-map/*.pickle
+
+# Generated Folium HTML
+/templates/final.html
+/final.html
